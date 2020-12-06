@@ -336,6 +336,10 @@ cg_keyboard_group_add(struct wlr_input_device *device, struct cg_seat *seat)
 	wl_signal_add(&cg_group->wlr_group->keyboard.events.modifiers, &cg_group->modifiers);
 	cg_group->modifiers.notify = handle_keyboard_group_modifiers;
 
+	if (wlr_seat_get_keyboard(seat->seat) == NULL) {
+		wlr_seat_set_keyboard(seat->seat, cg_group->wlr_group->input_device);
+	}
+
 	return;
 
 cleanup:
@@ -374,8 +378,6 @@ handle_new_keyboard(struct cg_seat *seat, struct wlr_input_device *device)
 	wlr_keyboard_set_repeat_info(device->keyboard, 25, 600);
 
 	cg_keyboard_group_add(device, seat);
-
-	wlr_seat_set_keyboard(seat->seat, device);
 }
 
 static void
